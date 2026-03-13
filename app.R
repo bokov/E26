@@ -1,0 +1,88 @@
+library(shiny)
+library(dplyr)
+library(googlesheets4)
+library(shinyjs)
+library(shiny.cookies)
+
+# Read the CSV file (expects 'data.csv' with columns 'key' and 'value')
+data <- read.csv('data.csv', stringsAsFactors = FALSE)
+
+# Set your Google Sheet ID here (replace with your own sheet ID)
+sheet_id <- "YOUR_SHEET_ID_HERE"
+
+# --- Google Sheets authentication for deployment ---
+# Use service account for non-interactive authentication if present
+if (file.exists("service-account.json")) {
+  googlesheets4::gs4_auth(path = "service-account.json")
+} else {
+  googlesheets4::gs4_deauth() # fallback: read-only public sheets, or prompt in dev
+}
+
+ui <- fluidPage(
+  useShinyjs(),
+  useShinyCookies(),
+  titlePanel("Key Lookup App"),
+  sidebarLayout(
+    sidebarPanel(
+      textInput("user_key", "Enter key:", ""),
+      actionButton("check_btn", "Check"),
+      selectInput("unlocked_values", "Unlocked values:", choices = NULL)
+    ),
+    mainPanel(
+      textOutput("result")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Track unlocked values via cookies
+  unlocked <- reactiveVal({
+    cookie_val <- getCookie("unlocked")
+    if (!is.null(cookie_val) && nzchar(cookie_val)) {
+      unique(strsplit(cookie_val, "::", fixed=TRUE)[[1]])
+    } else {
+      character(0)
+    }
+  })
+
+  observeEvent(input$check_btn, {
+    req(input$user_key)
+    match <- data %>% filter(key == input$user_key)
+    if (nrow(match) > 0) {
+      val <- match$value[1]
+      # Add to unlocked if not already present
+      new_unlocked <- unique(c(unlocked(), val))
+      unlocked(new_unlocked)
+      setCookie("unlocked", paste(new_unlocked, collapse = "::"))
+    }
+  })
+
+  observe({
+    updateSelectInput(session, "unlocked_values", choices = unlocked())
+  })
+
+  # Observe all input changes (except every keystroke)
+  observe({
+    # Only log when an input changes (not every keystroke)
+    # This triggers on blur for textInput, and on change for other controls
+    reactiveValuesToList(input) # depend on all inputs
+    isolate({
+      general_log_inputs(input, session)
+    })
+  })
+
+  result <- eventReactive(input$check_btn, {
+    req(input$user_key)
+    match <- data %>% filter(key == input$user_key)
+    if (nrow(match) > 0) {
+      paste("Value:", match$value[1])
+    } else {
+      "Key not found."
+    }
+  })
+  output$result <- renderText({
+    result()
+  })
+}
+
+shinyApp(ui, server)
