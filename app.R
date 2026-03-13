@@ -7,12 +7,20 @@ library(cookies)
 # Read the CSV file (expects 'data.csv' with columns 'key' and 'value')
 data <- read.csv('data.csv', stringsAsFactors = FALSE)
 
-# Set your Google Sheet ID here (replace with your own sheet ID)
-sheet_id <- "YOUR_SHEET_ID_HERE"
+# Helper to read sheet_id from file
+get_sheet_id <- function(path = "sheet_id.txt") {
+  if (file.exists(path)) {
+    id <- trimws(readLines(path, warn = FALSE, n = 1))
+    if (nzchar(id)) return(id)
+  }
+  return(NA_character_)
+}
+
+sheet_id <- get_sheet_id()
 
 # Helper: log all input values to Google Sheets
 log_enabled <- TRUE
-if (sheet_id == "YOUR_SHEET_ID_HERE" || is.null(sheet_id) || !nzchar(sheet_id)) {
+if (is.na(sheet_id) || !nzchar(sheet_id)) {
   log_enabled <- FALSE
   warning("Logging disabled: sheet_id is not set.")
 }
