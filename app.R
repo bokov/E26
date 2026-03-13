@@ -127,14 +127,30 @@ ui <- add_cookie_handlers(fluidPage(
       tags$img(src='steampunk_egg.svg', width='120', alt='Easter egg logo', style='display:block; margin-top:16px;')
     ),
     mainPanel(
-      h3("Your next clue"),
-      textOutput("result"),
-      tags$div(style = "margin-top: 10px; margin-bottom: 16px; padding: 10px; border: 2px dashed #a66b2f; background: rgba(247,199,127,0.23);",
-               "Collected clues appear in the dropdown. Keep hunting!"),
-      h4("Egg-ometer Progress"),
-      plotOutput("progress_plot", height = "200px"),
-      tags$div(style = "margin-top: 10px; padding: 9px; border-radius: 10px; background: rgba(255, 246, 209, 0.8); color: #4f2f0e;",
-               textOutput("progress_text"))
+      tabsetPanel(
+        tabPanel("Clue Validator",
+          h3("Your next clue"),
+          textOutput("result"),
+          tags$div(style = "margin-top: 10px; margin-bottom: 16px; padding: 10px; border: 2px dashed #a66b2f; background: rgba(247,199,127,0.23);",
+                   "Collected clues appear in the dropdown. Keep hunting!"),
+          h4("Egg-ometer Progress"),
+          plotOutput("progress_plot", height = "200px"),
+          tags$div(style = "margin-top: 10px; padding: 9px; border-radius: 10px; background: rgba(255, 246, 209, 0.8); color: #4f2f0e;",
+                   textOutput("progress_text"))
+        ),
+        tabPanel("Treasure Atlas",
+          tags$h3("Easter Bunny's Atlas"),
+          tags$p("Use this page to track your global scavenger route, create clues at hidden waypoints, or map your completed treasures."),
+          tags$img(src = "egg_factory_background.svg", width = "100%", style = "border: 3px solid #a66b2f; border-radius: 12px;"),
+          tags$p("Tip: Every validated key unlocks a new coordinate in the atlas. Stay curious and keep exploring!"),
+          tags$ul(
+            tags$li("Redominates: The Forest of Whimsy"),
+            tags$li("Gearworks: The Clockwork Burrow"),
+            tags$li("Skybridge: Floating Bunny Tower"),
+            tags$li("Vault: Golden egg repository")
+          )
+        )
+      )
     )
   )
 ))
