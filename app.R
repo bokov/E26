@@ -71,31 +71,33 @@ ui <- add_cookie_handlers(fluidPage(
 server <- function(input, output, session) {
   add_cookie_handlers(session)
 
+  # Use a reactiveVal to store the result to display
+  result_val <- reactiveVal("")
+  unlocked_vals <- reactiveVal("");
   # Track unlocked values via cookies (reactive)
-  unlocked <- reactive({
+  reactive({
     cookie_val <- cookies::get_cookie(session, "unlocked")
-    if (is.null(cookie_val) || is.na(cookie_val) || !nzchar(as.character(cookie_val))) {
-      character(0)
-    } else {
-      split_val <- strsplit(as.character(cookie_val), "::", fixed=TRUE)[[1]]
-      if (length(split_val) == 0 || (length(split_val) == 1 && split_val == "")) {
-        character(0)
-      } else {
-        unique(split_val)
-      }
-    }
+    unlocked_vals(
+        if (is.null(cookie_val) || is.na(cookie_val) || !nzchar(as.character(cookie_val))) {
+        ""
+        } else {
+        split_val <- strsplit(as.character(cookie_val), "::", fixed=TRUE)[[1]]
+        if (length(split_val) == 0 || (length(split_val) == 1 && split_val == "")) {
+            ""
+        } else {
+            unique(split_val)
+        }
+        }
+    )
   })
 
-  observeEvent(input$check_btn, {
-    req(input$user_key)
-    kmatch <- data %>% filter(key == input$user_key)
-    if (nrow(kmatch) > 0) {
-      val <- kmatch$value[1]
-      # Add to unlocked if not already present
-      new_unlocked <- unique(c(unlocked(), val))
-      cookies::set_cookie(session, "unlocked", paste(new_unlocked, collapse = "::"))
-    }
-  })
+  # observeEvent(input$check_btn, {
+  #  req(input$user_key)
+  #  kmatch <- data %>% filter(key == input$user_key)
+  #  if (nrow(kmatch) > 0) {
+  #    val <- kmatch$value[1]
+  #  }
+  #})
 
   # observe({
   #   updateSelectInput(session, "unlocked_values", choices = unlocked())
@@ -111,17 +113,23 @@ server <- function(input, output, session) {
     })
   })
 
-  result <- eventReactive(input$check_btn, {
+
+  observeEvent(input$check_btn, {
     req(input$user_key)
     kmatch <- data %>% filter(key == input$user_key)
     if (nrow(kmatch) > 0) {
-      paste("Value:", kmatch$value[1])
+      result_val(rv <- paste("Value:", kmatch$value[1]))
+      # Add to unlocked if not already present
+      new_unlocked <- unique(c(unlocked_vals(), rv))
+      cookies::set_cookie(session, "unlocked", paste(new_unlocked, collapse = "::"))
+      unlocked_vals(new_unlocked)
     } else {
-      "Key not found."
+      result_val("Key not found.")
     }
   })
+
   output$result <- renderText({
-    result()
+    result_val()
   })
 }
 
