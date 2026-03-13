@@ -102,7 +102,10 @@ ui <- add_cookie_handlers(fluidPage(
       ".shiny-input-container, .well { background: linear-gradient(135deg, #fdf3e7, #f6e5d5); border: 2px solid #b57834; box-shadow: 4px 4px 10px rgba(0,0,0,.16); }"
     )),
     tags$style(HTML(
-      "body { background-image: url('https://i.imgur.com/cZHs71h.png'); background-size: cover; color: #333; }"
+      "body { background-image: url('egg_factory_background.svg'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed; color: #333; }"
+    )),
+    tags$style(HTML(
+      "body { font-family: 'Cinzel', serif; }"
     )),
     tags$style(HTML(
       "h1, h2, h3, label { font-family: 'Cinzel', serif; }"
@@ -112,7 +115,7 @@ ui <- add_cookie_handlers(fluidPage(
            tags$img(src='steampunk_egg.svg', width=72, height=72, style='border:2px solid #a66b2f; border-radius:15%; background:rgba(255,255,255,0.8);'),
            tags$div(
              tags$h1(app_title, style='margin:0; font-size:2rem; color:#3e2e15; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);'),
-             tags$p("Hosted by the Easter Bunny — key in your clue and unlock your next steampunk discovery!", style='margin: 0; color:#553f20;')
+             tags$p("Hosted by the Easter Bunny - submit your key and unlock your next clue!", style='margin: 0; color:#553f20;')
            )
   ),
   sidebarLayout(
@@ -120,7 +123,8 @@ ui <- add_cookie_handlers(fluidPage(
       textInput("user_key", "Enter key:", "", placeholder = "Type secret key here"),
       actionButton("check_btn", "Validate Key", class = "btn btn-warning"),
       selectInput("unlocked_values", "Unlocked clues:", choices = NULL),
-      tags$p("Easter Bunny  & mechanical mystery vibes: collect clues, unlock the next Hatchery challenge.")
+      tags$p("The egg factory is humming. Enter the right key and unroll your next bunny clue adventure."),
+      tags$img(src='steampunk_egg.svg', width='120', alt='Easter egg logo', style='display:block; margin-top:16px;')
     ),
     mainPanel(
       h3("Your next clue"),

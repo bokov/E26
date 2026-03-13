@@ -1,0 +1,48 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'>
+  <defs>
+    <linearGradient id='sky' x1='0' y1='0' x2='0' y2='1'>
+      <stop offset='0%' stop-color='#fdeedb'/>
+      <stop offset='100%' stop-color='#f2d599'/>
+    </linearGradient>
+    <linearGradient id='panel' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0%' stop-color='#bf8e61'/>
+      <stop offset='100%' stop-color='#7b4a2d'/>
+    </linearGradient>
+    <pattern id='pipes' x='0' y='0' width='60' height='60' patternUnits='userSpaceOnUse'>
+      <rect x='0' y='0' width='60' height='60' fill='#a16f3c'/>
+      <line x1='0' y1='30' x2='60' y2='30' stroke='#d8bdb1' stroke-width='8'/>
+      <line x1='30' y1='0' x2='30' y2='60' stroke='#d8bdb1' stroke-width='8'/>
+    </pattern>
+  </defs>
+  <rect width='1200' height='800' fill='url(#sky)' />
+  <rect x='0' y='600' width='1200' height='200' fill='#c38f5b' />
+  <rect x='0' y='560' width='1200' height='40' fill='url(#pipes)' />
+  <g opacity='0.85'>
+    <rect x='120' y='500' width='960' height='60' rx='18' ry='18' fill='url(#panel)' />
+    <circle cx='260' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='340' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='420' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='500' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='580' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='660' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='740' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='820' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='900' cy='530' r='12' fill='#ffe7a1' />
+    <circle cx='980' cy='530' r='12' fill='#ffe7a1' />
+  </g>
+  <g stroke='#703c19' stroke-width='7' fill='none'>
+    <path d='M280,550 Q320,530 360,550' />
+    <path d='M500,550 Q540,530 580,550' />
+    <path d='M720,550 Q760,530 800,550' />
+  </g>
+  <g>
+    <ellipse cx='280' cy='520' rx='30' ry='40' fill='#ffffff' />
+    <ellipse cx='580' cy='520' rx='30' ry='40' fill='#f9a9e3' />
+    <ellipse cx='900' cy='520' rx='30' ry='40' fill='#9ad6e8' />
+  </g>
+  <g transform='translate(100,70)'>
+    <circle cx='70' cy='70' r='55' fill='#f8e7cb' stroke='#a56a31' stroke-width='8' />
+    <path d='M50,70 Q70,50 90,70 Q70,85 50,70 Z' fill='#a56a31' />
+  </g>
+  <text x='70' y='150' font-size='40' font-family='Cinzel, serif' fill='#432a12'>Easter Bunny Works</text>
+</svg>
