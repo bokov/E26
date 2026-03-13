@@ -88,18 +88,18 @@ server <- function(input, output, session) {
 
   observeEvent(input$check_btn, {
     req(input$user_key)
-    match <- data %>% filter(key == input$user_key)
-    if (nrow(match) > 0) {
-      val <- match$value[1]
+    kmatch <- data %>% filter(key == input$user_key)
+    if (nrow(kmatch) > 0) {
+      val <- kmatch$value[1]
       # Add to unlocked if not already present
       new_unlocked <- unique(c(unlocked(), val))
       cookies::set_cookie(session, "unlocked", paste(new_unlocked, collapse = "::"))
     }
   })
 
-  observe({
-    updateSelectInput(session, "unlocked_values", choices = unlocked())
-  })
+  # observe({
+  #   updateSelectInput(session, "unlocked_values", choices = unlocked())
+  # })
 
   # Observe all input changes (except every keystroke)
   observe({
@@ -113,9 +113,9 @@ server <- function(input, output, session) {
 
   result <- eventReactive(input$check_btn, {
     req(input$user_key)
-    match <- data %>% filter(key == input$user_key)
-    if (nrow(match) > 0) {
-      paste("Value:", match$value[1])
+    kmatch <- data %>% filter(key == input$user_key)
+    if (nrow(kmatch) > 0) {
+      paste("Value:", kmatch$value[1])
     } else {
       "Key not found."
     }
