@@ -7,15 +7,18 @@ library(cookies)
 # Read the CSV file (expects 'data.csv' with columns 'key' and 'value')
 data <- read.csv('data.csv', stringsAsFactors = FALSE)
 
-
 safe_general_log_inputs <- function(input, session) {
   if (!log_enabled) return(invisible(NULL))
   tryCatch({
     input_names <- names(input)
-    input_values <- lapply(input_names, function(nm) input[[nm]])
+    # Coerce all input values to length 1 character ("" for empty)
+    input_values <- lapply(input_names, function(nm) {
+      val <- input[[nm]]
+      if (is.null(val) || length(val) == 0) "" else as.character(val)[1]
+    })
     names(input_values) <- input_names
-    input_values$timestamp <- Sys.time()
-    input_values$session_id <- session$token
+    input_values$timestamp <- as.character(Sys.time())
+    input_values$session_id <- as.character(session$token)
     df <- as.data.frame(input_values, stringsAsFactors = FALSE)
     googlesheets4::sheet_append(sheet_id, df)
   }, error = function(e) {
@@ -72,7 +75,12 @@ server <- function(input, output, session) {
   unlocked <- reactive({
     cookie_val <- cookies::get_cookie(session, "unlocked")
     if (!is.null(cookie_val) && nzchar(cookie_val)) {
-      unique(strsplit(cookie_val, "::", fixed=TRUE)[[1]])
+      split_val <- strsplit(cookie_val, "::", fixed=TRUE)[[1]]
+      if (length(split_val) == 0 || (length(split_val) == 1 && split_val == "")) {
+        character(0)
+      } else {
+        unique(split_val)
+      }
     } else {
       character(0)
     }
