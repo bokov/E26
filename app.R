@@ -121,7 +121,7 @@ server <- function(input, output, session) {
       result_val(rv <- paste("Value:", kmatch$value[1]))
       # Add to unlocked if not already present
       new_unlocked <- unique(c(unlocked_vals(), rv))
-      cookies::set_cookie(session, "unlocked", paste(new_unlocked, collapse = "::"))
+      cookies::set_cookie("unlocked", paste(new_unlocked, collapse = "::"))
       unlocked_vals(new_unlocked)
     } else {
       result_val("Key not found.")
