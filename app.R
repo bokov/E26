@@ -144,7 +144,8 @@ server <- function(input, output, session) {
 
   # Track unlocked values via cookies (observe once per cookie change)
   observe({
-    cookie_val <- cookies::get_cookie(session, "unlocked")
+    # friggin NEVER give get_cookie and set_cookie as session argument!!!!
+    cookie_val <- cookies::get_cookie("unlocked")
     loaded_values <- if (is.null(cookie_val) || is.na(cookie_val) || !nzchar(as.character(cookie_val))) {
       character(0)
     } else {
