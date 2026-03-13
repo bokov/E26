@@ -49,8 +49,10 @@ ui <- add_cookie_handlers(fluidPage(
 ))
 
 server <- function(input, output, session) {
-  # Track unlocked values via cookies
-  unlocked <- reactiveVal({
+  add_cookie_handlers(session)
+
+  # Track unlocked values via cookies (reactive)
+  unlocked <- reactive({
     cookie_val <- cookies::get_cookie(session, "unlocked")
     if (!is.null(cookie_val) && nzchar(cookie_val)) {
       unique(strsplit(cookie_val, "::", fixed=TRUE)[[1]])
@@ -66,7 +68,6 @@ server <- function(input, output, session) {
       val <- match$value[1]
       # Add to unlocked if not already present
       new_unlocked <- unique(c(unlocked(), val))
-      unlocked(new_unlocked)
       cookies::set_cookie(session, "unlocked", paste(new_unlocked, collapse = "::"))
     }
   })
