@@ -2,7 +2,7 @@ library(shiny)
 library(dplyr)
 library(googlesheets4)
 library(shinyjs)
-library(shiny.cookies)
+library(cookies)
 
 # Read the CSV file (expects 'data.csv' with columns 'key' and 'value')
 data <- read.csv('data.csv', stringsAsFactors = FALSE)
@@ -37,7 +37,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   # Track unlocked values via cookies
   unlocked <- reactiveVal({
-    cookie_val <- getCookie("unlocked")
+    cookie_val <- cookies::get_cookie(session, "unlocked")
     if (!is.null(cookie_val) && nzchar(cookie_val)) {
       unique(strsplit(cookie_val, "::", fixed=TRUE)[[1]])
     } else {
@@ -53,7 +53,7 @@ server <- function(input, output, session) {
       # Add to unlocked if not already present
       new_unlocked <- unique(c(unlocked(), val))
       unlocked(new_unlocked)
-      setCookie("unlocked", paste(new_unlocked, collapse = "::"))
+      cookies::set_cookie(session, "unlocked", paste(new_unlocked, collapse = "::"))
     }
   })
 
