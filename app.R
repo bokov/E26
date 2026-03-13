@@ -4,6 +4,7 @@ library(googlesheets4)
 library(shinyjs)
 library(cookies)
 library(bslib)
+library(ggplot2)
 
 # Read the CSV file (expects 'data.csv' with columns 'key' and 'value')
 data <- read.csv('data.csv', stringsAsFactors = FALSE)
@@ -90,14 +91,15 @@ easter_theme <- bs_theme(
   bootswatch = "flatly"
 )
 
-app_title <- "Easter Bunny Steampunk Clue Validator"
+app_title <- "Easter Bunny Clue Validator"
 
 ui <- add_cookie_handlers(fluidPage(
   theme = easter_theme,
   useShinyjs(),
   tags$head(
+    tags$link(rel = "icon", type = "image/svg+xml", href = "favicon.svg"),
     tags$style(HTML(
-      ".shiny-input-container, .well { background: linear-gradient(135deg, #fdf3e7, #f6e5d5); border: 2px solid #b57834; box-shadow: 4px 4px 10px rgba(0,0,0,.16);}"
+      ".shiny-input-container, .well { background: linear-gradient(135deg, #fdf3e7, #f6e5d5); border: 2px solid #b57834; box-shadow: 4px 4px 10px rgba(0,0,0,.16); }"
     )),
     tags$style(HTML(
       "body { background-image: url('https://i.imgur.com/cZHs71h.png'); background-size: cover; color: #333; }"
@@ -106,19 +108,29 @@ ui <- add_cookie_handlers(fluidPage(
       "h1, h2, h3, label { font-family: 'Cinzel', serif; }"
     ))
   ),
-  titlePanel(app_title),
+  tags$div(style = 'display:flex; align-items:center; gap:12px; margin-bottom:16px; padding: 8px 6px; border: 2px solid #b57834; border-radius: 14px; background: rgba(247, 199, 127, 0.35); box-shadow: 0 0 12px rgba(0,0,0,.12);',
+           tags$img(src='steampunk_egg.svg', width=72, height=72, style='border:2px solid #a66b2f; border-radius:15%; background:rgba(255,255,255,0.8);'),
+           tags$div(
+             tags$h1(app_title, style='margin:0; font-size:2rem; color:#3e2e15; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);'),
+             tags$p("Hosted by the Easter Bunny — key in your clue and unlock your next steampunk discovery!", style='margin: 0; color:#553f20;')
+           )
+  ),
   sidebarLayout(
     sidebarPanel(
       textInput("user_key", "Enter key:", "", placeholder = "Type secret key here"),
       actionButton("check_btn", "Validate Key", class = "btn btn-warning"),
       selectInput("unlocked_values", "Unlocked clues:", choices = NULL),
-      tags$p("Easter Bunny steampunk & mechanical mystery vibes: collect clues, unlock the next Hatchery challenge.")
+      tags$p("Easter Bunny  & mechanical mystery vibes: collect clues, unlock the next Hatchery challenge.")
     ),
     mainPanel(
       h3("Your next clue"),
       textOutput("result"),
-      tags$div(style = "margin-top: 20px; padding: 10px; border: 2px dashed #a66b2f; background: rgba(247,199,127,0.23);",
-               "Collected clues appear in the dropdown. Keep hunting!")
+      tags$div(style = "margin-top: 10px; margin-bottom: 16px; padding: 10px; border: 2px dashed #a66b2f; background: rgba(247,199,127,0.23);",
+               "Collected clues appear in the dropdown. Keep hunting!"),
+      h4("Egg-ometer Progress"),
+      plotOutput("progress_plot", height = "200px"),
+      tags$div(style = "margin-top: 10px; padding: 9px; border-radius: 10px; background: rgba(255, 246, 209, 0.8); color: #4f2f0e;",
+               textOutput("progress_text"))
     )
   )
 ))
@@ -144,6 +156,11 @@ server <- function(input, output, session) {
       }
     }
     unlocked_vals(loaded_values)
+  })
+
+  # Keep select input updated with unlocked clues
+  observe({
+    updateSelectInput(session, "unlocked_values", choices = unlocked_vals())
   })
 
   # observeEvent(input$check_btn, {
@@ -186,6 +203,29 @@ server <- function(input, output, session) {
 
   output$result <- renderText({
     result_val()
+  })
+
+  output$progress_plot <- renderPlot({
+    unlocked <- length(unlocked_vals())
+    total <- max(1, nrow(data))
+    remaining <- max(0, total - unlocked)
+    progress_df <- data.frame(
+      status = factor(c("Cleared", "Remaining"), levels = c("Cleared", "Remaining")),
+      count = c(unlocked, remaining)
+    )
+    ggplot(progress_df, aes(x = 1, y = count, fill = status)) +
+      geom_col(width = 1, color = "#503a1b") +
+      coord_polar(theta = "y") +
+      scale_fill_manual(values = c("#76c893", "#f7c77f")) +
+      theme_void() +
+      theme(legend.position = "bottom", legend.title = element_blank(), plot.background = element_rect(fill = 'transparent', color = NA)) +
+      labs(title = "Steampunk Egg-ometer")
+  })
+
+  output$progress_text <- renderText({
+    unlocked <- length(unlocked_vals())
+    total <- max(1, nrow(data))
+    paste0("You have unlocked ", unlocked, " clue", ifelse(unlocked == 1, "", "s"), " out of ", total, " total clues.")
   })
 }
 

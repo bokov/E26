@@ -1,0 +1,14 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'>
+  <defs>
+    <linearGradient id='eggGrad' x1='0%' y1='0%' x2='100%' y2='100%'>
+      <stop offset='0%' stop-color='#fff8e1'/>
+      <stop offset='100%' stop-color='#f7c77f'/>
+    </linearGradient>
+  </defs>
+  <rect width='300' height='300' fill='#f8f1e4'/>
+  <ellipse cx='150' cy='160' rx='110' ry='140' fill='url(#eggGrad)' stroke='#a66b2f' stroke-width='12'/>
+  <path d='M60,180 Q150,120 240,180' stroke='#3e2e15' stroke-width='10' fill='none'/>
+  <circle cx='150' cy='130' r='12' fill='#d5a32b'/>
+  <text x='150' y='215' fill='#3e2e15' font-size='28' font-family='Cinzel, serif' text-anchor='middle'>Egg</text>
+  <text x='150' y='242' fill='#3e2e15' font-size='20' font-family='Cinzel, serif' text-anchor='middle'>Arcana</text>
+</svg>
