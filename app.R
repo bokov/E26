@@ -7,6 +7,23 @@ library(cookies)
 # Read the CSV file (expects 'data.csv' with columns 'key' and 'value')
 data <- read.csv('data.csv', stringsAsFactors = FALSE)
 
+
+safe_general_log_inputs <- function(input, session) {
+  if (!log_enabled) return(invisible(NULL))
+  tryCatch({
+    input_names <- names(input)
+    input_values <- lapply(input_names, function(nm) input[[nm]])
+    names(input_values) <- input_names
+    input_values$timestamp <- Sys.time()
+    input_values$session_id <- session$token
+    df <- as.data.frame(input_values, stringsAsFactors = FALSE)
+    googlesheets4::sheet_append(sheet_id, df)
+  }, error = function(e) {
+    assign("log_enabled", FALSE, envir = .GlobalEnv)
+    warning("Logging disabled: ", e$message)
+  })
+}
+
 # Helper to read sheet_id from file
 get_sheet_id <- function(path = "sheet_id.txt") {
   if (file.exists(path)) {
@@ -100,4 +117,4 @@ server <- function(input, output, session) {
   })
 }
 
-shinyApp(ui, server)
+shinyApp(ui = ui, server = server)
