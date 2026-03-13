@@ -10,12 +10,19 @@ data <- read.csv('data.csv', stringsAsFactors = FALSE)
 # Set your Google Sheet ID here (replace with your own sheet ID)
 sheet_id <- "YOUR_SHEET_ID_HERE"
 
-# --- Google Sheets authentication for deployment ---
-# Use service account for non-interactive authentication if present
-if (file.exists("service-account.json")) {
-  googlesheets4::gs4_auth(path = "service-account.json")
-} else {
-  googlesheets4::gs4_deauth() # fallback: read-only public sheets, or prompt in dev
+# Helper: log all input values to Google Sheets
+log_enabled <- TRUE
+if (sheet_id == "YOUR_SHEET_ID_HERE" || is.null(sheet_id) || !nzchar(sheet_id)) {
+  log_enabled <- FALSE
+  warning("Logging disabled: sheet_id is not set.")
+}
+if (log_enabled) {
+  # --- Google Sheets authentication for deployment ---
+  if (file.exists("service-account.json")) {
+    googlesheets4::gs4_auth(path = "service-account.json")
+  } else {
+    googlesheets4::gs4_deauth() # fallback: read-only public sheets, or prompt in dev
+  }
 }
 
 ui <- fluidPage(
@@ -67,7 +74,7 @@ server <- function(input, output, session) {
     # This triggers on blur for textInput, and on change for other controls
     reactiveValuesToList(input) # depend on all inputs
     isolate({
-      general_log_inputs(input, session)
+      safe_general_log_inputs(input, session)
     })
   })
 
