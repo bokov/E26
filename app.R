@@ -74,15 +74,15 @@ server <- function(input, output, session) {
   # Track unlocked values via cookies (reactive)
   unlocked <- reactive({
     cookie_val <- cookies::get_cookie(session, "unlocked")
-    if (!is.null(cookie_val) && nzchar(cookie_val)) {
-      split_val <- strsplit(cookie_val, "::", fixed=TRUE)[[1]]
+    if (is.null(cookie_val) || is.na(cookie_val) || !nzchar(as.character(cookie_val))) {
+      character(0)
+    } else {
+      split_val <- strsplit(as.character(cookie_val), "::", fixed=TRUE)[[1]]
       if (length(split_val) == 0 || (length(split_val) == 1 && split_val == "")) {
         character(0)
       } else {
         unique(split_val)
       }
-    } else {
-      character(0)
     }
   })
 
