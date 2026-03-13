@@ -33,9 +33,8 @@ if (log_enabled) {
   }
 }
 
-ui <- fluidPage(
+ui <- add_cookie_handlers(fluidPage(
   useShinyjs(),
-  useShinyCookies(),
   titlePanel("Key Lookup App"),
   sidebarLayout(
     sidebarPanel(
@@ -47,7 +46,7 @@ ui <- fluidPage(
       textOutput("result")
     )
   )
-)
+))
 
 server <- function(input, output, session) {
   # Track unlocked values via cookies
