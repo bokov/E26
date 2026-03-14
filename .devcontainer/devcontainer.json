@@ -9,5 +9,5 @@
     "REditorSupport.r-lsp"
   ],
   "forwardPorts": [3838],
-  "postCreateCommand": "R -e 'if (!require(\"shiny\")) install.packages(\"shiny\"); if (!require(\"tidyverse\")) install.packages(\"tidyverse\"); if (!require(\"rio\")) install.packages(\"rio\"); if (!require(\"ggplot2\")) install.packages(\"ggplot2\")'"
+  "postCreateCommand": "R -e 'if (!require(\"shinyjs\")) install.packages(\"shinyjs\"); if (!require(\"bslib\")) install.packages(\"bslib\"); if (!require(\"cookies\")) install.packages(\"cookies\"); if (!require(\"googlesheets4\")) install.packages(\"googlesheets4\"); if (!require(\"tidyverse\")) install.packages(\"tidyverse\"); if (!require(\"rio\")) install.packages(\"rio\"); if (!require(\"ggplot2\")) install.packages(\"ggplot2\")'"
 }
