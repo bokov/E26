@@ -1,0 +1,1 @@
+Package: E26\nVersion: 0.1.0\nTitle: Short Description of the Package\nDescription: This package provides functionality for data analysis and visualization using Shiny and various dependencies.\nLicense: What license it uses\nImports: shiny, dplyr, googlesheets4, shinyjs, cookies, bslib, ggplot2\n
